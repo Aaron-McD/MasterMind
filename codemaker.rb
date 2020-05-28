@@ -1,4 +1,4 @@
-require_relative 'peg'
+require_relative 'code'
 include MasterMind
 
 module MasterMind
@@ -9,28 +9,9 @@ module MasterMind
         CORRECT_COLOR = "white"
         WRONG_COLOR = "blank"
         def initialize(colors = nil)
-            if(colors == nil)
-                @code = self.generate_code
-            elsif(colors.length == 4)
-                @code = []
-                colors.each do |color|
-                    @code.push(Peg.new(color))
-                end
-            else
-                raise ArgumentError
-            end
+            @code = Code.new(colors)
         end
         
-        def generate_code
-            new_code = []
-            srand(Time.new.to_i)
-            4.times do 
-                index = rand(6)
-                new_code.push(Peg.new(COLORS[index]))
-            end
-            return new_code
-        end
-
         def generate_key(code_in)
             key = []
             possible_color = ''
@@ -39,16 +20,16 @@ module MasterMind
             skip_indexes = []
             # If the code_in contains two of the same color but the code only contains one then the key will return one peg to correspond with it
             # In this scenario if one of the two colors fall in the correct position the key will show red instead of white
-            self.code.each_with_index do |peg, i|
+            self.code.pegs.each_with_index do |peg, i|
                 red_found = false
                 white_found = false
-                code_in.each_with_index do |peg_in, j|
+                code_in.pegs.each_with_index do |peg_in, j|
                     if(skip_indexes.include?(j))
                         next
                     end
                     if(peg.color == peg_in.color)
                         if(i == j)
-                            key.push(Peg.new(CORRECT_POS))
+                            key.push(CORRECT_POS)
                             skip_indexes.push(j)
                             white_found = false
                             red_found = true
@@ -62,13 +43,13 @@ module MasterMind
                     end
                 end
                 if(white_found)
-                    key.push(Peg.new(possible_color))
+                    key.push(possible_color)
                     skip_indexes.push(possible_pos)
                 elsif(!red_found)
-                    key.push(Peg.new(WRONG_COLOR))
+                    key.push(WRONG_COLOR)
                 end
             end
-            return key
+            return Code.new(key).randomize_self!
         end
     end
 end
