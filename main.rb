@@ -6,5 +6,6 @@ breaker = CodeBreaker.new
 maker = CodeMaker.new
 code = Code.new
 
-puts code
-puts maker.generate_color_hash(code)
+puts "Guess: #{code}"
+puts "Answer: #{maker.code}"
+puts maker.generate_key(code)

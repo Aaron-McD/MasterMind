@@ -2,12 +2,13 @@ require_relative 'code'
 
 module MasterMind
     class CodeMaker
-        attr_reader :code
+        attr_reader :code, :code_hash
         CORRECT_POS = "red"
         CORRECT_COLOR = "white"
         WRONG_COLOR = "blank"
         def initialize(colors = nil)
             @code = Code.new(colors)
+            @code_hash = self.generate_color_hash(@code)
         end
 
         def generate_color_hash(code)
@@ -17,47 +18,46 @@ module MasterMind
             end
         end
 
-=begin  
         def generate_key(code_in)
-            key = []
-            possible_color = ''
-            possible_pos = 0
-            # We only want to count each peg_in once so we will skip pegs we have counted
-            skip_indexes = []
-            # If the code_in contains two of the same color but the code only contains one then the key will return one peg to correspond with it
-            # In this scenario if one of the two colors fall in the correct position the key will show red instead of white
-            self.code.pegs.each_with_index do |peg, i|
-                red_found = false
-                white_found = false
-                code_in.pegs.each_with_index do |peg_in, j|
-                    if(skip_indexes.include?(j))
-                        next
-                    end
-                    if(peg.color == peg_in.color)
-                        if(i == j)
-                            key.push(CORRECT_POS)
-                            skip_indexes.push(j)
-                            white_found = false
-                            red_found = true
-                            break
-                        else
-                            # This is left for determining, if a red key is concluded then that will take precedence
-                            white_found = true
-                            possible_color = CORRECT_COLOR
-                            possible_pos = j
-                        end
-                    end
-                end
-                if(white_found)
-                    key.push(possible_color)
-                    skip_indexes.push(possible_pos)
-                elsif(!red_found)
-                    key.push(WRONG_COLOR)
+            code_in_hash = self.generate_color_hash(code_in)
+            whites_hash = Hash.new(0)
+            reds_hash = Hash.new(0)
+            colors_out = []
+            # Calculate the number of white pegs we would have
+            code_in_hash.each do |key, value|
+                if(self.code_hash[key] == 0)
+                    next
+                else
+                    whites_hash[key] = (self.code_hash[key] > value) ? value : self.code_hash[key]
                 end
             end
-            return Code.new(key).randomize_self!
+            # Calculate the number of red pegs we would have
+            for i in 0..3 do
+                if(code_in.pegs[i].color == self.code.pegs[i].color)
+                    reds_hash[code_in.pegs[i].color] += 1
+                end
+            end
+            # Subract the whites by the reds
+            whites_hash.each_key do |key|
+                if(reds_hash[key] > 0)
+                    whites_hash[key] -= reds_hash[key]
+                end
+            end
+            # Combine into a code, filling in 0's with "blanks"
+            whites_hash.each_value do |value|
+                value.times do
+                    colors_out.push(CORRECT_COLOR)
+                end
+            end
+            reds_hash.each_value do |value|
+                value.times do
+                    colors_out.push(CORRECT_POS)
+                end
+            end
+            until colors_out.length == 4
+                colors_out.push(WRONG_COLOR)
+            end
+            return Code.new(colors_out).randomize_self!
         end
-
-=end
     end
 end
