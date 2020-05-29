@@ -2,30 +2,11 @@ require_relative 'codemaker'
 require_relative 'codebreaker'
 include MasterMind
 
-prob = ColorProb.new
+breaker = CodeBreaker.new
+maker = CodeMaker.new
 
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-prob.adjust_location_data(1)
-p prob.locations
-p prob.exist
-p prob.in_code
+
+p breaker.colors
+puts breaker.guess
+puts maker.code
+puts maker.generate_key(breaker.guess)

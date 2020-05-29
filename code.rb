@@ -1,9 +1,9 @@
 require_relative 'peg'
-include MasterMind
 
 module MasterMind
     class Code
         attr_reader :pegs
+        COLORS = ["red", "black", "white", "blue", "green", "yellow"]
         def initialize(colors = nil)
             if(colors == nil)
                 @pegs = self.generate_code
@@ -19,7 +19,7 @@ module MasterMind
 
         def generate_code
             new_code = []
-            srand(Time.new.to_i)
+            #srand(Time.new.to_i)
             4.times do 
                 index = rand(6)
                 new_code.push(Peg.new(COLORS[index]))

@@ -1,10 +1,8 @@
 require_relative 'code'
-include MasterMind
 
 module MasterMind
     class CodeMaker
         attr_reader :code
-        COLORS = ["red", "black", "white", "blue", "green", "yellow"]
         CORRECT_POS = "red"
         CORRECT_COLOR = "white"
         WRONG_COLOR = "blank"
