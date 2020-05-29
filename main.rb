@@ -1,9 +1,31 @@
 require_relative 'codemaker'
+require_relative 'codebreaker'
 include MasterMind
 
-my_maker = CodeMaker.new(["white", "white", "red", "blue"])
-my_guess = Code.new(["black","black","black","black"])
-puts my_maker.code
-puts "\n"
-puts my_maker.generate_key(my_guess)
+prob = ColorProb.new
 
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+prob.adjust_location_data(1)
+p prob.locations
+p prob.exist
+p prob.in_code
