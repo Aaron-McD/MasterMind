@@ -3,6 +3,7 @@ include MasterMind
 
 $breaker = CodeBreaker.new
 maker = CodeMaker.new
+prob = ColorProb.new(3)
 
 def print_breaker_info
     $breaker.colors.each do |key, value|
