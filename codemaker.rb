@@ -8,18 +8,11 @@ module MasterMind
         WRONG_COLOR = "blank"
         def initialize(colors = nil)
             @code = Code.new(colors)
-            @code_hash = self.generate_color_hash(@code)
-        end
-
-        def generate_color_hash(code)
-            return code.pegs.reduce(Hash.new(0)) do |colors, peg|
-                colors[peg.color] += 1
-                colors
-            end
-        end
+            @code_hash = @code.generate_color_hash
+        end 
 
         def generate_key(code_in)
-            code_in_hash = self.generate_color_hash(code_in)
+            code_in_hash = code_in.generate_color_hash
             whites_hash = Hash.new(0)
             reds_hash = Hash.new(0)
             colors_out = []

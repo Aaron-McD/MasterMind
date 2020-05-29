@@ -13,5 +13,9 @@ module MasterMind
                        'black' => []}
             @guess = Code.new
         end
+
+        def anaylze_key(key)
+            
+        end
     end
 end

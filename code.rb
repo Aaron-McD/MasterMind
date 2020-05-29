@@ -17,6 +17,13 @@ module MasterMind
             end
         end
 
+        def generate_color_hash
+            return self.pegs.reduce(Hash.new(0)) do |colors, peg|
+                colors[peg.color] += 1
+                colors
+            end
+        end
+
         def generate_code
             new_code = []
             #srand(Time.new.to_i)

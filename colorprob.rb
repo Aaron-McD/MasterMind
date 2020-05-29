@@ -1,5 +1,5 @@
 module MasterMind
-    # This will be the data structure that contains the probability out of 100 for each location and whether it exsists
+    # This will be the data structure that contains the probability out of 100 for each location and whether it exists
     class ColorProb
         attr_reader :locations, :in_code, :exist
         def initialize(starting_prob = 16.67)
