@@ -9,7 +9,15 @@ module MasterMind
         def initialize(colors = nil)
             @code = Code.new(colors)
         end
-        
+
+        def generate_color_hash(code)
+            return code.pegs.reduce(Hash.new(0)) do |colors, peg|
+                colors[peg.color] += 1
+                colors
+            end
+        end
+
+=begin  
         def generate_key(code_in)
             key = []
             possible_color = ''
@@ -49,5 +57,7 @@ module MasterMind
             end
             return Code.new(key).randomize_self!
         end
+
+=end
     end
 end

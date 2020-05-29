@@ -4,9 +4,7 @@ include MasterMind
 
 breaker = CodeBreaker.new
 maker = CodeMaker.new
+code = Code.new
 
-
-p breaker.colors
-puts breaker.guess
-puts maker.code
-puts maker.generate_key(breaker.guess)
+puts code
+puts maker.generate_color_hash(code)
