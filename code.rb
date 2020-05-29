@@ -1,9 +1,8 @@
-require_relative 'peg'
+require_relative 'mastermind'
 
 module MasterMind
     class Code
         attr_reader :pegs
-        COLORS = ["red", "black", "white", "blue", "green", "yellow"]
         def initialize(colors = nil)
             if(colors == nil)
                 @pegs = self.generate_code

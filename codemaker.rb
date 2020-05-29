@@ -1,11 +1,8 @@
-require_relative 'code'
+require_relative 'mastermind'
 
 module MasterMind
     class CodeMaker
         attr_reader :code, :code_hash
-        CORRECT_POS = "red"
-        CORRECT_COLOR = "white"
-        WRONG_COLOR = "blank"
         def initialize(colors = nil)
             @code = Code.new(colors)
             @code_hash = @code.generate_color_hash

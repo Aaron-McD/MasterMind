@@ -1,13 +1,16 @@
+require_relative 'mastermind'
+
 module MasterMind
     class Peg
         attr_reader :color
-        COLORS = ["red", "black", "white", "blue", "green", "yellow", "blank"]
-        def initialize(color = "blank")
+        valid_colors = COLORS
+        valid_colors.push(WRONG_COLOR)
+        def initialize(color = WRONG_COLOR)
             @color = color
         end
 
         def color=(value)
-            if(COLORS.include?(value))
+            if(VALID_COLORS.include?(value))
                 @color = value
             else
                 raise NameError
