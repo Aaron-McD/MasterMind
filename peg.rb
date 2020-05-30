@@ -1,5 +1,3 @@
-require_relative 'mastermind'
-
 module MasterMind
     class Peg
         attr_reader :color

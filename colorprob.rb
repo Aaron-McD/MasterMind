@@ -1,7 +1,3 @@
-require_relative 'mastermind'
-
-# Add the Functionality to keep track of the number of the color
-
 module MasterMind
     # This will be the data structure that contains the probability out of 100 for each location and whether it exists
     class ColorProb

@@ -1,5 +1,3 @@
-require_relative 'mastermind'
-
 module MasterMind
     class CodeMaker
         attr_reader :code, :code_hash

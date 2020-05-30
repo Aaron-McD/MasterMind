@@ -1,4 +1,3 @@
-require_relative 'mastermind'
 module MasterMind
     class CodeBreaker
         attr_reader :colors, :guess
