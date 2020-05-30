@@ -31,12 +31,14 @@ module MasterMind
         end
 
         def adjust_count(count)
+            diff = count - @count
+            diff = diff * (100 / @available_locations)
             @count = count
             @in_code = (16.67 * count).round(2)
-            if(@count > 0)
-                self.reset_locations
-            else
-                @in_code = 0
+            for i in 0..3
+                if locations[i] != nil
+                    @locations[i] = (@locations[i] + diff).round(2)
+                end
             end
         end
 
@@ -121,11 +123,14 @@ module MasterMind
                 end
             end
             over_100 = nil
+            under_0 = nil
             for i in 0..3 do
                 if(@locations[i] == nil)
                     next
                 elsif(@locations[i] > 100)
                     over_100 = i
+                elsif(@locations[i] < 0)
+                    under_0 = i
                 end
             end
             if(over_100 != nil)
@@ -135,9 +140,30 @@ module MasterMind
                     extra_value = @locations[over_100] - 100
                     divided = extra_value / (@available_locations - 1)
                     for i in 0..3 do
-                        if(i = over_100)
+                        if(i == over_100)
                             @locations[i] = 100
-                        else
+                        elsif @locations[i] != nil
+                            @locations[i] = (@locations[i] + divided).round(2)
+                        end
+                    end
+                    anaylze_data
+                end
+            end
+            if(under_0 != nil)
+                if(@available_locations == 1)
+                    @locations[under_0] = 0
+                    @available_locations = 0
+                    @in_code = 0
+                    @count = 0
+                else
+                    extra_value = @locations[under_0] * -1
+                    @available_locations -= 1
+                    divided = extra_value / (@available_locations)
+
+                    for i in 0..3 do
+                        if(i == under_0)
+                            @locations[i] = 0
+                        elsif @locations[i] != nil
                             @locations[i] = (@locations[i] + divided).round(2)
                         end
                     end

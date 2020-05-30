@@ -3,12 +3,12 @@ module MasterMind
     class CodeBreaker
         attr_reader :colors, :guess
         def initialize
-            @colors = {COLORS[0] => [],
-                       COLORS[1] => [],
-                       COLORS[2] => [],
-                       COLORS[3] => [],
-                       COLORS[4] => [],
-                       COLORS[5] => []}
+            @colors = {COLORS[0] => 0,
+                       COLORS[1] => 0,
+                       COLORS[2] => 0,
+                       COLORS[3] => 0,
+                       COLORS[4] => 0,
+                       COLORS[5] => 0}
             @guess = Code.new
             @available_colors = 6
         end
@@ -31,7 +31,6 @@ module MasterMind
         def anaylze_key(key)
             key_hash = key.generate_color_hash
             guess_hash = self.guess.generate_color_hash
-            index_color_hash = Hash.new(0)
             # Base cases: All blank, One White, One Red
             # All Blank = All of the colors in @colors should equal nil, none exist
             # One White = All of the colors have a likely chance of existing however an unlikely chance of being in the correct position
@@ -50,19 +49,21 @@ module MasterMind
                     # that many ColorProb objects in that color
                     if(@colors[peg.color] == nil) # temp handling
                         next
-                    elsif(@colors[peg.color].empty? || (ex_likely >= guess_hash[peg.color] && @colors[peg.color].length < ex_likely))
-                        color_prob = ColorProb.new
+                    elsif(@colors[peg.color] == 0)
+                        amount = (ex_likely >= guess_hash[peg.color]) ? guess_hash[peg.color] : ex_likely
+                        color_prob = ColorProb.new(amount)
                         color_prob.adjust_in_code(@available_colors, ex_likely)
                         color_prob.adjust_location_data(index, pos_likely, pos_unlikely)
-                        @colors[peg.color].push(color_prob)
-                    elsif(index_color_hash[peg.color] != @colors[peg.color].length)
-                        @colors[peg.color][index_color_hash[peg.color]].adjust_in_code(@available_colors, ex_likely)
-                        @colors[peg.color][index_color_hash[peg.color]].adjust_location_data(index, pos_likely, pos_unlikely)
-                        index_color_hash[peg.color] += 1
+                        @colors[peg.color] = color_prob
+                    else
+                        if(ex_likely >= guess_hash[peg.color] && guess_hash[peg.color] > @colors[peg.color].count)
+                            @colors[peg.color].adjust_count(guess_hash[peg.color])
+                        end
+                        @colors[peg.color].adjust_in_code(@available_colors, ex_likely)
+                        @colors[peg.color].adjust_location_data(index, pos_likely, pos_unlikely)
                     end
                 end
             end
-            # 
         end
     end
 end

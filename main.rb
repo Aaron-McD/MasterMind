@@ -8,17 +8,18 @@ prob = ColorProb.new(3)
 def print_breaker_info
     $breaker.colors.each do |key, value|
         if value == nil
-            puts "All blank"
-        elsif value.empty?
-            next
+            puts "#{key} is not in the code"
+        elsif value == 0
+            puts "#{key} has no data"
         else
-            puts "#{key} = #{value[0].locations} and is #{value[0].in_code}% likely to exist"
+            puts "#{key} = #{value.locations} there are at least #{value.count} in there and it is #{value.in_code}% likely to exist"
         end
     end
+    puts "\n"
 end
 
 12.times do |i|
-    puts "Guess number #{i}"
+    puts "Guess number #{i + 1}"
     puts "Guess: #{$breaker.generate_guess}"
     puts "Answer: #{maker.code}"
     puts "Key: #{maker.generate_key($breaker.guess)}"
