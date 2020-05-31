@@ -54,12 +54,12 @@ module MasterMind
             end
             if remove
                 @available_locations -= 1
-                new_prob = @locations[index] / @available_locations
-                @locations[index] = nil
-                i = 0
                 if(@available_locations == 0)
                     self.adjust_count(@count - 1)
                 else
+                    new_prob = @locations[index] / @available_locations
+                    @locations[index] = nil
+                    i = 0
                     while i < 4 do
                         if locations[i] != nil
                             locations[i] = (locations[i] + new_prob).round(2)
@@ -120,6 +120,11 @@ module MasterMind
             end
             over_100 = nil
             under_0 = nil
+            if @count > @available_locations
+                until @count == @available_locations
+                    self.adjust_count(@count - 1)
+                end
+            end
             for i in 0..3 do
                 if(@locations[i] == nil)
                     next
@@ -155,7 +160,6 @@ module MasterMind
                     extra_value = @locations[under_0] * -1
                     @available_locations -= 1
                     divided = extra_value / (@available_locations)
-
                     for i in 0..3 do
                         if(i == under_0)
                             @locations[i] = 0
