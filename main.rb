@@ -16,7 +16,7 @@ def print_breaker_info
     end
     puts "\n"
 end
-100000.times do
+1000.times do
     $breaker = CodeBreaker.new
     maker = CodeMaker.new
     12.times do |i|
