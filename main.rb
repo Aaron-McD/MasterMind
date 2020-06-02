@@ -3,40 +3,30 @@ include MasterMind
 
 $breaker = CodeBreaker.new
 maker = CodeMaker.new
-prob = ColorProb.new
 
-
-p prob.locations
-p prob.count
-prob.anaylze_data(0,4,0,2,4)
-p prob.locations
-p prob.count
-prob.anaylze_data(0,4,1,2,4)
-p prob.locations
-p prob.count
-
-
-
-=begin
 def print_breaker_info
     $breaker.colors.each do |key, value|
         if value == nil
-            puts "All blank"
-        elsif value.empty?
-            next
+            puts "#{key} is not in the code."
+        elsif value.exist == 16.67
+            puts "#{key} has no information."
         else
-            puts "#{key} = #{value[0].locations} and is #{value[0].in_code}% likely to exist"
+            puts "#{key} = #{value.locations} and is #{value.exist}% likely to exist with at most #{value.count}."
         end
     end
 end
-
-12.times do |i|
-    puts "Guess number #{i}"
-    puts "Guess: #{$breaker.generate_guess}"
-    puts "Answer: #{maker.code}"
-    puts "Key: #{maker.generate_key($breaker.guess)}"
-    $breaker.anaylze_key(maker.generate_key($breaker.guess))
-    print_breaker_info
+100000.times do
+    $breaker = CodeBreaker.new
+    maker = CodeMaker.new
+    12.times do |i|
+        puts "Guess number #{i + 1}"
+        puts "Guess: #{$breaker.generate_guess}"
+        puts "Answer: #{maker.code}"
+        puts "Key: #{maker.generate_key($breaker.guess)}"
+        $breaker.anaylze_key(maker.generate_key($breaker.guess))
+        print_breaker_info
+        puts "\n"
+    end
 end
 
-=end
+
