@@ -42,8 +42,6 @@ module MasterMind
                     if(@colors[peg.color].exist == 0)
                         @colors[peg.color] = nil
                     end
-                    @colors[peg.color].adjust_in_code(@available_colors, ex_likely)
-                    @colors[peg.color].adjust_location_data(index, pos_likely, pos_unlikely, remove_location)
                 end
             end
         end
