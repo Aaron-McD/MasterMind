@@ -1,8 +1,8 @@
 module MasterMind
     # This will be the data structure that contains the probability out of 100 for each location and whether it exists
     class ColorProb
-        attr_reader :locations, :exist, :count
-        BASE_PROB = 0.1 # This is the base probability that changes what we know about location data
+        attr_reader :locations, :exist, :count, :available_locations, :most_probable_indicies
+        BASE_PROB = 0.2 # This is the base probability that changes what we know about location data
         def initialize(count = 1, starting_prob = 16.67)
             @locations = Array.new(4, 0)
             @exist = (starting_prob * count).round(2)
@@ -11,6 +11,7 @@ module MasterMind
             @max_percentage = count * 100
             @count = count
             @base_location_prob = ((count * 100 )/ 4).round(2)
+            @most_probable_indicies = []
             reset_locations
         end
 
@@ -82,30 +83,57 @@ module MasterMind
                         end
                     end
                 end
+                calculate_most_probable_indicies
             end
         end
 
         def anaylze_valid_colors(amount_guessed, valid_colors, pegs) # We will take into consideration that each peg has a random chance of belonging to any valid color
             base_percents = [25, 33.34, 50, 100, 0]
             base = base_percents[4 - valid_colors] # This is our starting base that any color could belong to a peg
+            other_options = valid_colors - amount_guessed
             if pegs == 0
                 return 0
             end
             prob_of_not_being_picked = (100 - (amount_guessed * base)) / 100.0 # This will be our starting probability of the color NOT being selected by a peg
+            if prob_of_not_being_picked == 0
+                return pegs * 100
+            end
             pegs -= 1 # We assume that for each peg considered it can only associate with one color
-            valid_colors -= 1 # Therefore the number of pegs to consider and the number of possible options to consider go down
+            other_options -= 1 # Therefore the number of pegs to consider and the number of possible options to consider go down
             while pegs > 0
-                base = base_percents[4 - valid_colors]
+                if other_options == 0
+                    return pegs * 100
+                end
+
+                base = base_percents[4 - (other_options + amount_guessed)]
                 next_prob = (100 - (amount_guessed * base)) / 100.0
                 prob_of_not_being_picked *= next_prob
                 pegs -= 1
-                valid_colors -= 1
+                other_options -= 1
             end
             prob_of_not_being_picked *= 100
             return (100 - prob_of_not_being_picked).round(2) # Finally we return the probability that the color would have been chosen
         end
 
         private
+
+        def calculate_most_probable_indicies
+            indices = []
+            until indices.length == count
+                highest = 0
+                index = nil
+                for i in 0..3
+                    unless(indices.include?(i) || @locations[i] == nil)
+                        if @locations[i] > highest
+                            highest = @locations[i]
+                            index = i
+                        end
+                    end
+                end
+                indices.push(index)
+            end
+            @most_probable_indicies = indices
+        end
 
         def check_percentages
             over_100 = nil
@@ -226,6 +254,7 @@ module MasterMind
             @count = new_amount
             reset_max_percentage
             reset_base_location_prob
+            calculate_most_probable_indicies
         end
 
         def reset_max_percentage

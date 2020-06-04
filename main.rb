@@ -16,18 +16,26 @@ def print_breaker_info
     end
     puts "\n"
 end
-1000.times do
+rounds = 1000
+wins = 0
+rounds.times do
     $breaker = CodeBreaker.new
     maker = CodeMaker.new
-    12.times do |i|
+    TURNS.times do |i|
+        guess = $breaker.generate_guess
         puts "Guess number #{i + 1}"
-        puts "Guess: #{$breaker.generate_guess}"
+        puts "Guess: #{guess}"
         puts "Answer: #{maker.code}"
-        puts "Key: #{maker.generate_key($breaker.guess)}"
-        $breaker.anaylze_key(maker.generate_key($breaker.guess))
+        puts "Key: #{maker.generate_key(guess)}"
+        if(maker.break_code?(guess))
+            wins += 1
+        end
+        $breaker.anaylze_key(maker.generate_key(guess))
         print_breaker_info
         puts "\n"
     end
 end
+
+puts "The AI was able to break the code #{wins} times, meaning a win rate of #{((wins.to_f / rounds) * 100).round(2)}%."
 
 

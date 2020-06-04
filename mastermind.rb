@@ -3,6 +3,7 @@ module MasterMind
     CORRECT_POS = "red"
     CORRECT_COLOR = "white"
     WRONG_COLOR = "blank"
+    TURNS = 12
 end
 
 require_relative 'peg.rb'

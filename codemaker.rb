@@ -6,6 +6,16 @@ module MasterMind
             @code_hash = @code.generate_color_hash
         end 
 
+        def break_code?(code_in)
+            key = self.generate_key(code_in)
+            hash = key.generate_color_hash
+            if hash[CORRECT_POS] == 4
+                return true
+            else
+                return false
+            end
+        end
+
         def generate_key(code_in)
             code_in_hash = code_in.generate_color_hash
             whites_hash = Hash.new(0)

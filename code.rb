@@ -23,7 +23,6 @@ module MasterMind
 
         def generate_code
             new_code = []
-            #srand(Time.new.to_i)
             4.times do 
                 index = rand(6)
                 new_code.push(Peg.new(COLORS[index]))

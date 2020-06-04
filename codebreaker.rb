@@ -8,25 +8,47 @@ module MasterMind
                        COLORS[3] => ColorProb.new,
                        COLORS[4] => ColorProb.new,
                        COLORS[5] => ColorProb.new}
-            @guess = Code.new
-            @available_colors = 6
+            @guess = nil
+            @available_colors = self.update_available_colors
             @guess_count = 0
+            @guesses_made = []
         end
 
         #temporary place holder
         def generate_guess
             @guess_count += 1
-            @guess = Code.new
+            if(@guess_count == 1)
+                color = @available_colors[rand(@available_colors.length)]
+                code_colors = []
+                4.times do
+                    code_colors.push(color)
+                end
+            elsif(@guess_count == TURNS)
+                code_colors = generate_last_guess
+            else
+                code_colors = []
+                rand_code = Code.new
+                rand_code.pegs.each do |peg|
+                    code_colors.push(peg.color)
+                end
+            end
+            if(@guesses_made.include?(code_colors))
+                return self.generate_guess
+            else
+                @guesses_made.push(code_colors)
+                @guess = Code.new(code_colors)
+                return @guess
+            end
         end
 
         def update_available_colors
-            new_amount = 0
+            new_colors = []
             @colors.each do |key, value|
                 if value != nil
-                    new_amount += 1
+                    new_colors.push(key)
                 end
             end
-            @available_colors = new_amount
+            return new_colors
         end
 
         def anaylze_key(key)
@@ -44,9 +66,32 @@ module MasterMind
                     end
                 end
             end
+            @available_colors = self.update_available_colors
         end
 
         private
+
+        def generate_last_guess
+            code_colors = Array.new(4, WRONG_COLOR)
+            most_probable_colors = @available_colors.sort_by { |color| @colors[color].exist }.reverse
+            colors_hash = Hash.new(0)
+            for i in 0..3
+                most_probable_colors.each do |color|
+                    if(colors_hash[color] == @colors[color].count)
+                        next
+                    else
+                        if(@colors[color].most_probable_indicies.include?(i) && code_colors[i] == WRONG_COLOR)
+                            code_colors[i] = color
+                        end
+                    end
+                end
+            end
+            while code_colors.include?(WRONG_COLOR)
+                index = code_colors.index(WRONG_COLOR)
+                code_colors[index] = most_probable_colors[rand(most_probable_colors.length)]
+            end
+            return code_colors
+        end
 
         def count_valids
             valids = 0
