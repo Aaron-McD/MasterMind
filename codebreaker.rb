@@ -12,9 +12,9 @@ module MasterMind
             @available_colors = self.update_available_colors
             @guess_count = 0
             @guesses_made = []
+            @wrong_colors = []
         end
 
-        #temporary place holder
         def generate_guess
             @guess_count += 1
             if(@guess_count == 1)
@@ -27,9 +27,10 @@ module MasterMind
                 code_colors = generate_last_guess
             else
                 code_colors = []
-                rand_code = Code.new
-                rand_code.pegs.each do |peg|
-                    code_colors.push(peg.color)
+                if(@guess_count % 2 == 0)
+                    code_colors = generate_smart_guess
+                else
+                    code_colors = generate_normal_guess
                 end
             end
             if(@guesses_made.include?(code_colors))
@@ -62,6 +63,7 @@ module MasterMind
                 if(@colors[peg.color] != nil)
                     @colors[peg.color].anaylze_data(whites, reds, index, amount_used, valid_colors_used)
                     if(@colors[peg.color].exist == 0)
+                        @wrong_colors.push(peg.color)
                         @colors[peg.color] = nil
                     end
                 end
@@ -70,6 +72,30 @@ module MasterMind
         end
 
         private
+
+        def generate_smart_guess
+            code_colors = Array.new(4, WRONG_COLOR)
+            if(@wrong_colors.length >= 1)
+                2.times do
+                    code_colors[rand(4)] = @wrong_colors[rand(@wrong_colors.length)]
+                end
+                while code_colors.include?(WRONG_COLOR)
+                    index = code_colors.index(WRONG_COLOR)
+                    code_colors[index] = @available_colors[rand(@available_colors.length)]
+                end
+                return code_colors
+            else
+                return generate_normal_guess
+            end
+        end
+
+        def generate_normal_guess
+            code_colors = []
+            4.times do
+                code_colors.push(@available_colors[rand(@available_colors.length)])
+            end
+            return code_colors
+        end
 
         def generate_last_guess
             code_colors = Array.new(4, WRONG_COLOR)
@@ -100,7 +126,6 @@ module MasterMind
                     valids += 1
                 end
             end
-
             return valids
         end
     end
