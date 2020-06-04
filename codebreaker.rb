@@ -18,13 +18,11 @@ module MasterMind
         def generate_guess
             @guess_count += 1
             if(@guess_count == 1)
-                color = @available_colors[rand(@available_colors.length)]
-                code_colors = []
-                4.times do
-                    code_colors.push(color)
-                end
+                code_colors = generate_single_color_guess
             elsif(@guess_count == TURNS)
-                code_colors = generate_last_guess
+                code_colors = generate_probable_guess
+            elsif(@guess_count == TURNS / 2)
+                code_colors = generate_single_color_guess
             else
                 code_colors = []
                 if(@guess_count % 2 == 0)
@@ -33,7 +31,8 @@ module MasterMind
                     code_colors = generate_normal_guess
                 end
             end
-            if(@guesses_made.include?(code_colors))
+            if(@guesses_made.include?(code_colors) && @guess_count != TURNS)
+                @guess_count -= 1
                 return self.generate_guess
             else
                 @guesses_made.push(code_colors)
@@ -73,6 +72,18 @@ module MasterMind
 
         private
 
+        def generate_single_color_guess
+            code_colors = []
+            color = @available_colors[rand(@available_colors.length)]
+            4.times do
+                code_colors.push(color)
+            end
+            if(@guesses_made.include?(code_colors))
+                return generate_normal_guess
+            end
+            return code_colors
+        end
+
         def generate_smart_guess
             code_colors = Array.new(4, WRONG_COLOR)
             if(@wrong_colors.length >= 1)
@@ -81,7 +92,8 @@ module MasterMind
                 end
                 while code_colors.include?(WRONG_COLOR)
                     index = code_colors.index(WRONG_COLOR)
-                    code_colors[index] = @available_colors[rand(@available_colors.length)]
+                    colors = available_colors_for_index(index)
+                    code_colors[index] = colors[rand(colors.length)]
                 end
                 return code_colors
             else
@@ -90,14 +102,25 @@ module MasterMind
         end
 
         def generate_normal_guess
-            code_colors = []
-            4.times do
-                code_colors.push(@available_colors[rand(@available_colors.length)])
+            code_colors = Array.new(4, WRONG_COLOR)
+            4.times do |i|
+                colors = available_colors_for_index(i)
+                code_colors[i] = colors[rand(colors.length)]
             end
             return code_colors
         end
 
-        def generate_last_guess
+        def available_colors_for_index(index)
+            colors = []
+            @available_colors.each do |color|
+                if(@colors[color].locations[index] != nil)
+                    colors.push(color)
+                end
+            end
+            return colors
+        end
+
+        def generate_probable_guess
             code_colors = Array.new(4, WRONG_COLOR)
             most_probable_colors = @available_colors.sort_by { |color| @colors[color].exist }.reverse
             colors_hash = Hash.new(0)
@@ -112,8 +135,10 @@ module MasterMind
                     end
                 end
             end
+            wrong_indicies = []
             while code_colors.include?(WRONG_COLOR)
                 index = code_colors.index(WRONG_COLOR)
+                wrong_indicies.push(index)
                 code_colors[index] = most_probable_colors[rand(most_probable_colors.length)]
             end
             return code_colors

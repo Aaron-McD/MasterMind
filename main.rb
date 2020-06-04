@@ -29,6 +29,7 @@ rounds.times do
         puts "Key: #{maker.generate_key(guess)}"
         if(maker.break_code?(guess))
             wins += 1
+            break
         end
         $breaker.anaylze_key(maker.generate_key(guess))
         print_breaker_info
