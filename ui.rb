@@ -35,20 +35,45 @@ module MasterMind
             puts "#{CORRECT_COLOR} pegs represent that one of your colors is in the wrong position but is in the code."
             puts "#{WRONG_COLOR} pegs represents that one of your colors is not in the code."
             puts "Remember that the key will be given in a random order to make it more difficult to crack and don't forget there could be more than one of any color in the code!\n\n\n"
-        end
-
-        def UI.show_game_opening
-            
-
+            puts "\n\n\nEnter any key to go back."
+            input = gets.chomp
         end
 
         def UI.show_main_menu
-
-
+            continue = true
+            while(continue)
+                puts "Hello and Welcome to Master Mind on the console! An application built by Aaron."
+                puts "Please enter a number for what you would like to do."
+                puts "1. See Rules"
+                puts "2. Play a round as Code Maker"
+                puts "3. Play a round as Code Breaker"
+                puts "4. Play 'x' amount of alternating games"
+                puts "5. Reset the scores"
+                puts "6. Close Application"
+                input = gets.chomp.to_i
+                while input > 6 || input < 1
+                    puts "Sorry that isn't an option."
+                    input = gets.chomp.to_i
+                end
+                case input
+                when 1
+                    UI.display_rules
+                when 2
+                    UI.play_as_codemaker
+                when 3
+                    UI.play_as_codebreaker
+                when 4
+                    UI.play_x_games
+                when 5
+                    UI.reset_scores
+                when 6
+                    continue = false
+                end
+            end
         end
 
         def UI.show_score
-
+            puts "Computer Score: #{computer_score}                             Your Score: #{player_score}"
         end
     end
 end

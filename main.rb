@@ -4,7 +4,7 @@ include MasterMind
 $breaker = CodeBreaker.new
 maker = CodeMaker.new
 
-UI.display_rules
+UI.show_main_menu
 
 =begin
 def print_breaker_info
