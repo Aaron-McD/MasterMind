@@ -90,10 +90,12 @@ module MasterMind
                 2.times do
                     code_colors[rand(4)] = @wrong_colors[rand(@wrong_colors.length)]
                 end
-                while code_colors.include?(WRONG_COLOR)
+                index = code_colors.index(WRONG_COLOR)
+                colors = available_colors_for_index(index)
+                color = colors[rand(colors.length)]
+                2.times do
                     index = code_colors.index(WRONG_COLOR)
-                    colors = available_colors_for_index(index)
-                    code_colors[index] = colors[rand(colors.length)]
+                    code_colors[index] = color
                 end
                 return code_colors
             else
@@ -135,22 +137,11 @@ module MasterMind
                     end
                 end
             end
+            wrong_indicies = []
             while code_colors.include?(WRONG_COLOR)
                 index = code_colors.index(WRONG_COLOR)
-                new_colors = most_probable_colors.select { |color| @colors[color].exist == 100}
-                highest_color = nil
-                highest = 0
-                for i in 0..(new_colors.length - 1) do
-                    if @colors[new_colors[i]].locations[index] == nil
-                        next
-                    else
-                        if @colors[new_colors[i]].locations[index] >= highest
-                            highest = @colors[new_colors[i]].locations[index]
-                            highest_color = new_colors[i]
-                        end
-                    end
-                end
-                code_colors[index] = highest_color
+                wrong_indicies.push(index)
+                code_colors[index] = most_probable_colors[rand(most_probable_colors.length)]
             end
             return code_colors
         end
