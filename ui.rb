@@ -30,6 +30,7 @@ module MasterMind
             puts "Code Breaker:"
             puts "You may be able to guess what you do hear by the above text but if you didn't read that then that's fine."
             puts "You will have 12 turns to make guesses for a four color code containing any number of these colors: #{COLORS}"
+            puts "You may only use two of your guess as single color guesses and the final guess if you think the code is one color."
             puts "The computer will then generate a key for you to represent how well you guessed where each color in that key corresponds to a color in your guess."
             puts "#{CORRECT_POS} pegs represent that one of your colors is in the correct position and in the code."
             puts "#{CORRECT_COLOR} pegs represent that one of your colors is in the wrong position but is in the code."
