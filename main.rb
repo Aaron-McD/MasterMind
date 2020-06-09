@@ -4,6 +4,9 @@ include MasterMind
 $breaker = CodeBreaker.new
 maker = CodeMaker.new
 
+UI.show_main_menu
+
+=begin
 def print_breaker_info
     $breaker.colors.each do |key, value|
         if value == nil
@@ -38,5 +41,5 @@ rounds.times do
 end
 
 puts "The AI was able to break the code #{wins} times, meaning a win rate of #{((wins.to_f / rounds) * 100).round(2)}%."
-
+=end
 
