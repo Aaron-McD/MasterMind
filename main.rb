@@ -6,6 +6,8 @@ maker = CodeMaker.new
 
 UI.show_main_menu
 
+# Uncomment this section to test the AI
+
 =begin
 def print_breaker_info
     $breaker.colors.each do |key, value|
