@@ -1,7 +1,7 @@
 module MasterMind
     class Peg
         attr_reader :color
-        valid_colors = COLORS
+        valid_colors = COLORS.dup
         valid_colors.push(WRONG_COLOR)
         def initialize(color = WRONG_COLOR)
             @color = color

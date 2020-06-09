@@ -4,8 +4,7 @@ module MasterMind
     CORRECT_COLOR = "white"
     WRONG_COLOR = "blank"
     TURNS = 12
-    computer_score = 0 
-    player_score = 0
+    
 end
 
 require_relative 'peg.rb'

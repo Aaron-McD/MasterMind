@@ -42,8 +42,12 @@ module MasterMind
 
         def UI.show_main_menu
             continue = true
+            $computer_score = 0
+            $player_score = 0
             while(continue)
+                puts "\n\n"
                 puts "Hello and Welcome to Master Mind on the console! An application built by Aaron."
+                UI.show_score
                 puts "Please enter a number for what you would like to do."
                 puts "1. See Rules"
                 puts "2. Play a round as Code Maker"
@@ -66,7 +70,7 @@ module MasterMind
                 when 4
                     UI.play_x_games
                 when 5
-                    UI.reset_scores
+                    UI.reset_score
                 when 6
                     continue = false
                 end
@@ -74,7 +78,218 @@ module MasterMind
         end
 
         def UI.show_score
-            puts "Computer Score: #{computer_score}                             Your Score: #{player_score}"
+            puts "Computer Score: #{$computer_score}                             Your Score: #{$player_score}"
+        end
+
+        def UI.reset_score
+            $computer_score = 0; $player_score = 0
+        end
+
+        def UI.play_as_codemaker
+            puts "\n\n\nAlright you will be playing as the Code Maker so you need to start by typing in your code."
+            puts "Your code must be 4 colors long containing any number of these colors: #{COLORS}"
+            puts "Please enter your code, separating each color by a comma, remember that the position of the color will matter: "
+            input = UI.get_color_input
+            correct = true
+            turn = 1
+            win = false
+            breaker = CodeBreaker.new
+            player_checker = CodeMaker.new(input)
+            until turn > TURNS
+                puts "\nTurn #{turn}:"
+                puts "Your Code: #{player_checker.code}"
+                guess = breaker.generate_guess
+                puts "\nThe computer guesses: #{guess}"
+                puts "\nPlease type your response below to tell the computer how acurate the guess was."
+                puts "Options: (#{CORRECT_POS}, #{CORRECT_COLOR}, #{WRONG_COLOR}), again separate by commas, make sure for blanks you put the word blank:"
+                while true
+                    input = gets.chomp.downcase.split(',').map { |color| color.strip }
+                    if(input.length == 4)
+                        input.each do |color|
+                            if(color == CORRECT_POS || color == CORRECT_COLOR || color == WRONG_COLOR)
+                                next
+                            else
+                                correct = false
+                            end
+                        end
+                    else
+                        correct = false
+                    end
+                    until correct
+                        correct = true
+                        puts "Please enter 4 colors or blanks separated by commas to represent your response:"
+                        input = gets.chomp.downcase.split(',').map { |color| color.strip }
+                        if(input.length == 4)
+                            input.each do |color|
+                                if(color == CORRECT_POS || color == CORRECT_COLOR || color == WRONG_COLOR)
+                                    next
+                                else
+                                    correct = false
+                                end
+                            end
+                        else
+                            correct = false
+                        end
+                    end
+                    key_checker = player_checker.generate_key(guess).generate_color_hash
+                    player_key = Code.new(input)
+                    player_key_hash = player_key.generate_color_hash
+                    if player_key_hash == key_checker
+                        break
+                    else
+                        puts "Your answer should have the following amount of each: #{CORRECT_POS}: #{key_checker[CORRECT_POS]}    #{CORRECT_COLOR}: #{key_checker[CORRECT_COLOR]}    #{WRONG_COLOR}: #{key_checker[WRONG_COLOR]}"
+                    end
+                end
+                if(player_key_hash[CORRECT_POS] == 4)
+                    puts "The computer has cracked your code and gains a point!"
+                    puts "Press enter to continue..."
+                    input = gets
+                    $computer_score += 1
+                    break
+                else
+                    turn += 1
+                    breaker.anaylze_key(player_key)
+                end
+            end
+            if turn > TURNS
+                puts "The computer was unable to break your code, you gain a point!"
+                puts "Press enter to continue..."
+                input = gets
+                $player_score += 1
+            end
+        end
+
+        def UI.play_as_codebreaker
+            puts "\n\n\nAlright you will be playing as the Code Breaker."
+            puts "The computer will allow you to have 12 guesses with a max of 2 being single colored."
+            puts "The final guess may also be single colored if you believe the code to be one color."
+            turn = 1
+            maker = CodeMaker.new
+            single_color_guesses = 0
+            while true
+                puts "\nTurn #{turn}:"
+                puts "Please enter four colors from the following to represent your guess, separated by commas: #{COLORS}"
+                input = UI.get_color_input
+                input_code = Code.new(input)
+                input_hash = input_code.generate_color_hash
+                if(input_hash.length == 1)
+                    single_color_guess = true
+                else
+                    single_color_guess = false
+                end
+                while single_color_guess && single_color_guesses >= 2 && turn != TURNS
+                    puts "Sorry you have already used all of your single color guesses."
+                    input = UI.get_color_input
+                    input_code = Code.new(input)
+                    input_hash = input_code.generate_color_hash
+                    if(input_hash.length == 1)
+                        single_color_guess = true
+                    else
+                        single_color_guess = false
+                    end
+                end
+                if(single_color_guess)
+                    single_color_guesses += 1
+                end
+                key = maker.generate_key(input_code)
+                puts "\nThe Code Maker responds with: #{key}"
+                if(maker.break_code?(input_code))
+                    puts "You have cracked the code and gain a point!"
+                    $player_score += 1
+                    won = true
+                    break
+                else
+                    if(turn == TURNS)
+                        won = false
+                        break
+                    end
+                    puts "Press enter to continue..."
+                    input = gets
+                end
+                turn += 1
+            end
+            unless won
+                puts "Sorry but you are all out of guesses and couldn't crack the code. The code was #{maker.code}. The computer gains a point!"
+                $computer_score += 1
+            end
+            puts "Press enter to continue..."
+            input = gets
+        end
+
+        def UI.play_x_games
+            UI.reset_score
+            puts "\n\nHow many games would you like to play?"
+            games = gets.chomp.to_i
+            while games <= 1
+                puts "Please enter a number greater than 1."
+                games = gets.chomp.to_i
+            end
+            game = 1
+            puts "\n\nType to number for which position you want to start as:"
+            puts "1. Code Breaker"
+            puts "2. Code Maker"
+            choice = gets.chomp.to_i
+            while choice != 1 && choice != 2
+                puts "Please only enter 1 or 2:"
+                choice = gets.chomp.to_i
+            end
+            while game <= games
+                puts "Game #{game}:"
+                if(choice == 1)
+                    UI.play_as_codebreaker
+                    choice = 2
+                else
+                    UI.play_as_codemaker
+                    choice = 1
+                end
+                puts "Game #{game} is over. The current scores are:"
+                game += 1
+                UI.show_score
+                puts "Press enter to continue..."
+                input = gets
+            end
+            if($computer_score > $player_score)
+                puts "Looks like the computer beat you overall, better luck next time..."
+            elsif($computer_score == $player_score)
+                puts "Well you didn't lose but you also didn't win..."
+            else
+                puts "Well done, looks like you were able to beat the computer overall!"
+            end
+            puts "Press enter to return to the main menu..."
+            input = gets
+        end
+
+        def UI.get_color_input
+            correct = true
+            input = gets.chomp.downcase.split(',').map { |color| color.strip }
+            if(input.length == 4)
+                input.each do |color|
+                    if(COLORS.include?(color))
+                        next
+                    else
+                        correct = false
+                    end
+                end
+            else
+                correct = false
+            end
+            until correct
+                puts "Please enter only four colors, separated by commas and they must be one of these #{COLORS}:"
+                input = gets.chomp.downcase.split(',').map { |color| color.strip }
+                correct = true
+                if(input.length == 4)
+                    input.each do |color|
+                        if(COLORS.include?(color))
+                            next
+                        else
+                            correct = false
+                        end
+                    end
+                else
+                    correct = false
+                end
+            end
+            return input
         end
     end
 end
